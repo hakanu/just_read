@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+<html ng-app="jafApp">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Just Read - Clean reader</title>
+  <meta name="description" content="Read the web without clutter offline">
+  <link rel="canonical" href="http://justreadapp.com/">
+
+  <!-- Angular.JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+
+  <!-- jQuery (just for Bootstrap) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  
+  <!-- Bootstrap  -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+  <!-- Custom CSS -->    
+  <link rel="stylesheet" href="/static/css/all.css">
+
+  <!-- Firebase -->
+  <script src="https://cdn.firebase.com/js/client/2.1.0/firebase.js"></script>
+  
+  <!-- Firebase simple login -->
+  <script src="https://cdn.firebase.com/js/simple-login/1.6.3/firebase-simple-login.js"></script> 
+
+  <!-- AngularFire -->
+  <script src="https://cdn.firebase.com/libs/angularfire/0.8.0/angularfire.min.js"></script>
+
+  <!-- Angular controllers -->
+  <script src="/static/js/common.js"></script>
+  
+</head>
+
+
+    <body>
+
+      <div id="data-firebase-url" data-firebase-url="https://diziler.firebaseio.com/" />
+
+      <header class="site-header">
+
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">TV Show Progress Tracker</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+          
+        
+          <li ><a href="/notes/">Notes</a></li>
+          
+        
+          <li ><a href="/people/">People</a></li>
+          
+        
+      </ul>
+
+      <div ng-controller="authController">
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Login</h4>
+              </div>
+              <div class="modal-body">
+                <form method="" action="">
+                  <input type="email" name="email" placeholder="Enter email" data-ng-model="email" class="form-control" />
+                  <input type="password" name="password" placeholder="Enter password" data-ng-model="password" class="form-control" />
+                  <button type="button" class="btn btn-info btn-lg" value="Log in" ng-click="login()">
+                    Log in
+                  </button>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Signup Modal -->
+        <div id="signupModal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Sign up</h4>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <input type="email" name="email" placeholder="Enter an email" data-ng-model="email" class="form-control" />
+                  <input type="password" name="password" placeholder="Enter a password" data-ng-model="password" class="form-control" />
+                  <button type="button" class="btn btn-info btn-lg" value="Sign up" data-ng-click="signup()" onlick="signup()">
+                    Sign up
+                  </button>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">[[{ user.password.email }]]</a></li>
+          <li><a href="" ng-show="!user.password.email" data-toggle="modal" data-target="#loginModal">Log in</a></li>
+          <li><a href="" ng-show="!user.password.email" data-toggle="modal" data-target="#signupModal">Sign up</a></li>
+          <li><a href="" ng-click="logout()" ng-show="user.password.email">Log out</a></li>
+        </ul>
+      </div>
+      
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+</header>
+
+
+      <div class="page-content" >
+        <div class="wrap">
+          <div class="container-fluid">
+            <div class="home jumbotron">
+  <div class="container">
+    <h3>Simple App to track your TV Show progress</h3>
+    <p>Login and select the tv shows you have finished and then fill your progress on the ones you still watch.</p>
+  </div> <!-- /container -->
+
+</div> <!-- /home -->
+
+<div class="container" ng-controller="showController">
+  <!-- <div ng-show="user.password.email"> -->
+  <div class="">
+    <p>Select the TV Shows you have finished so far</p>
+    <div class="row">
+      <div ng-repeat="show in shows">
+        <div class="col-lg-2">
+          <div id="img-container" class="show-image">
+            <span ng-show="show.img">
+              <img src="[[{ show.img }]]" class="img-responsive">
+            </span>
+
+            <span ng-show="!show.img">
+              <img src="[[{ show.image.original }]]" class="img-responsive">
+            </span>
+
+            <input class="btn update" type="button" value="Seen" ng-click="seen(show.id)" />
+            <input class="btn delete" type="button" value="Skip" ng-click="skip(show.id)" />
+            <input class="btn partially-seen" type="button" value="Partially seen" ng-click="partiallySeen(show.id)" />
+          </div>
+
+          <p>[[{ show.title }]]</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+          </div>
+        </div>
+      </div>
+
+      <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+    </div>
+
+    <div class="footer-col-2 column">
+      <p>Made with love in Dublin</p>
+    </div>
+
+    <div class="footer-col-3 column">
+    </div>
+   
+
+  </div>
+
+</footer>
+
+
+    </body>
+</html>
