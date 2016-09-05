@@ -92,7 +92,9 @@ function initUiWithUserBookmarks(user) {
   if (!urlParam) {
     var _URL_TEMPLATE = (
         '<p><a href="{url}"">{title}</a></p>' +
-        '<p><sup>{date_added}</sup></p>' +
+        '<p><sup>{date_added} | </sup>' +
+        '<sup><a href="{originalUrl}" target="_blank">Source</a></sup></p>' +
+        '</p>' +
         '<p><sub>Tags: {tags}</sub></p><hr>');
     firebase.database().ref('/user_uid_to_urls/' + user.uid).once('value').then(
       function(snapshot) {
@@ -116,6 +118,7 @@ function initUiWithUserBookmarks(user) {
               'title': urlItem.title,
               'date_added': urlItem.date_added,
               'tags': tags,
+              'originalUrl': urlItem.url,
           }));
         }
       }
@@ -128,6 +131,8 @@ function initUiWithUserBookmarks(user) {
         var urlInfo = snapshot.val();
         console.log('updating view.');
         $('#h1-single-article-title').text(urlInfo.title);
+        $('#p-single-article-read-time-mins').text(urlInfo.extracted.read_time_mins + ' minute read');
+        $('#p-single-article-source-url').html('<a href="' + urlInfo.url + '" target="_blank">Source</a>');
         if (urlInfo.extracted) {
           $('#div-single-article-content').html(urlInfo.extracted.summary);
         } else {
