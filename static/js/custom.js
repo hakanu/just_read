@@ -1,6 +1,7 @@
 jQuery( document ).ready(function( $ ) {
   // Put stuff here.
   console.log('doc ready');
+  checkIfChromeExtensionInstalled();
   var config = {
     apiKey: "AIzaSyDglzT_bTVl4pUANG_N6-yIQSLMPy2wrLM",
     authDomain: "alterna.firebaseapp.com",
@@ -38,6 +39,12 @@ String.prototype.supplant = function (o) {
     }
   );
 };
+
+function checkIfChromeExtensionInstalled() {
+  if (chrome.app.isInstalled) {
+    document.getElementById('install-button').style.display = 'none';
+  }
+}
 
 
 function updateUiAfterLogout() {
