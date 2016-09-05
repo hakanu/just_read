@@ -9,44 +9,24 @@ jQuery( document ).ready(function( $ ) {
   };
   firebase.initializeApp(config);
 
-  var provider = new firebase.auth.GoogleAuthProvider();
-  provider.addScope('https://www.googleapis.com/auth/plus.login');
-
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       // console.log('user is here: ' + JSON.stringify(user));
       initUiWithUserBookmarks(user);
     } else {
-      console.log('user is null so signing in with popup');
-      firebase.auth().signInWithPopup(provider).then(function(result) {
-        console.log('signing in...');
-        // console.log('result: ' + JSON.stringify(result));
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        var token = result.credential.accessToken;
-        // The signed-in user info.
-        var user = result.user;
-        console.log('user: ' + user);
-        initUiWithUserBookmarks(user);
-      }).catch(function(error) {
-        console.log('error happened : ' + JSON.stringify(error));
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // The email of the user's account used.
-        var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
-        // ...
-      });
+      updateUiAfterLogout();
     }
   });
 
   $('#btn-logout').click(function(e) {
     console.log('Logging out.');
     firebase.auth().signOut();
-    $('#btn-logout').addClass('hidden');
-    $('#btn-login').removeClass('hidden');
-    $('#p-login-username').text('Not logged in');
+    updateUiAfterLogout();
+  });
+
+  $('#btn-login').click(function(e) {
+    console.log('Logging in.');
+    userSignIn();
   });
 });
 
@@ -58,6 +38,42 @@ String.prototype.supplant = function (o) {
     }
   );
 };
+
+
+function updateUiAfterLogout() {
+  $('#btn-logout').addClass('hidden');
+  $('#btn-login').removeClass('hidden');
+  $('#p-login-username').html('Not logged in');
+  $('#ul-urls').html('');
+  $('#p-message').text('Log in first');
+}
+
+
+function userSignIn() {
+  console.log('user is null so signing in with popup');
+  var provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('https://www.googleapis.com/auth/plus.login');
+  firebase.auth().signInWithRedirect(provider).then(function(result) {
+    console.log('signing in...');
+    // console.log('result: ' + JSON.stringify(result));
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    var token = result.credential.accessToken;
+    // The signed-in user info.
+    var user = result.user;
+    console.log('user: ' + user);
+    initUiWithUserBookmarks(user);
+  }).catch(function(error) {
+    console.log('error happened : ' + JSON.stringify(error));
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    // The email of the user's account used.
+    var email = error.email;
+    // The firebase.auth.AuthCredential type that was used.
+    var credential = error.credential;
+    // ...
+  });
+}
 
 function initUiWithUserBookmarks(user) {
   console.log('initing UI for ' + user.uid);
