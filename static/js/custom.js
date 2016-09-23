@@ -131,7 +131,7 @@ function initUiWithUserBookmarks(user) {
         var urlInfo = snapshot.val();
         console.log('updating view.');
         $('#h1-single-article-title').text(urlInfo.title);
-        $('#p-single-article-read-time-mins').text(urlInfo.extracted.read_time_mins + ' minute read');
+        $('#p-single-article-read-time-mins').text(urlInfo.extracted.read_time_mins + ' minute read // ');
         $('#p-single-article-source-url').html('<a href="' + urlInfo.url + '" target="_blank">Source</a>');
         if (urlInfo.extracted) {
           $('#div-single-article-content').html(urlInfo.extracted.summary);
