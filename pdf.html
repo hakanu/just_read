@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Just Read - Clean reader</title>
+  <meta name="description" content="Read the web without clutter offline">
+  <meta name="google-signin-client_id" content="206719829280-ts097qk0a0o0e6j03hvs2ll51aco2v4e.apps.googleusercontent.com">
+  <link rel="canonical" href="http://justreadapp.com/">
+  <link rel="stylesheet" type="text/css" href="http://bootswatch.com/paper/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="static/css/styles.css">
+  <link rel="icon" href="static/img/logo_128.png" type="image/x-icon" />
+  <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/gjadajkmpgdblfochjcfpkhnnkicfapl">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js"></script>
+</head>
+
+<body style="text-align:center;">
+  <h1>List your links to create pdf from their article content</h1>
+  <div>
+    <input type="text" name="link1" id="input-link1"><br/>
+    <input type="text" name="link2" id="input-link2"><br/>
+    <input type="text" name="link3" id="input-link3"><br/>
+    <input type="text" name="link4" id="input-link4"><br/>
+    <input type="text" name="link5" id="input-link5"><br/>
+    <br/>
+    <input type="submit" id="btn-submit" name="btn-submit">
+  </div>
+
+  <script src="static/js/jquery.min.js"></script>
+  <script type="text/javascript">
+    var _MAX_LINK_COUNT = 5;
+    $('#btn-submit').click(function(e) {
+      console.log('Exporting pdf.');
+      var oneFetcherUrl = 'https://justread-sitemco.rhcloud.com/api/get?url=';
+      var pdfHtml = '';
+      var links = [];
+      for (var i = _MAX_LINK_COUNT; i >= 0; i--) {
+        try {
+          var link = $('#input-link' + i)[0].value;
+        } catch(e) {
+          continue;
+        }
+        if (link) links.push(link);
+      }
+
+      console.log('links: ' + links);
+      for (var i in links) {
+        var link = links[i];
+        console.log('link: ' + link);
+        var jqxhr = $.get(oneFetcherUrl + link, function(result) {
+          console.log( "success: ");
+          console.log(result);
+          pdfHtml += result.content + '<br><br>';
+        })
+          .fail(function() {
+            console.log( "error" );
+          })
+          .always(function() {
+            console.log("finished: " + link);
+          });
+      }
+
+      console.log('pdfHtml: ' + pdfHtml);
+      // Default export is a4 paper, portrait, using milimeters for units
+      if (pdfHtml) {
+        console.log('Exporting pdf: ');
+        var doc = new jsPDF()
+        doc.text(pdfHtml, 10, 10)
+        doc.save('just_read_app_com.pdf')
+      }
+    });
+
+  </script>
+</body>
+</html>
