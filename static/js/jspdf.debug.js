@@ -7471,6 +7471,8 @@ Q\n";
   		}
 
   		//if text alignment was set, set margin/indent of each line
+      console.log('--------');
+      console.log(style['text-align']);
   		if (style['text-align'] !== undefined && (style['text-align'] === 'center' || style['text-align'] === 'right' || style['text-align'] === 'justify')) {
   			for (var i = 0; i < lines.length; ++i) {
   				var length = this.pdf.getStringUnitWidth(lines[i][0][0], fragmentSpecificMetrics) * fragmentSpecificMetrics.fontSize / k;

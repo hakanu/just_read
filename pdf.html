@@ -12,7 +12,8 @@
   <link rel="stylesheet" type="text/css" href="static/css/styles.css">
   <link rel="icon" href="static/img/logo_128.png" type="image/x-icon" />
   <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/gjadajkmpgdblfochjcfpkhnnkicfapl">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js"></script> -->
+  <script src="static/js/jspdf.debug.js"></script>
 </head>
 
 <body style="text-align:center;">
@@ -26,6 +27,8 @@
     <br/>
     <input type="submit" id="btn-submit" name="btn-submit">
   </div>
+
+  <div id="dummy" style="visibility: hidden;"></div>
 
   <script src="static/js/jquery.min.js"></script>
   <script type="text/javascript">
@@ -45,13 +48,34 @@
       }
 
       console.log('links: ' + links);
+      var numFetchedLinks = 0;
       for (var i in links) {
         var link = links[i];
         console.log('link: ' + link);
         var jqxhr = $.get(oneFetcherUrl + link, function(result) {
           console.log( "success: ");
           console.log(result);
-          pdfHtml += result.content + '<br><br>';
+          pdfHtml += '<br><br>'+ result.short_title + '<br><br>' + result.summary + '-------------------------';
+
+          numFetchedLinks += 1;
+          if (numFetchedLinks == links.length) {
+            pdfHtml = pdfHtml.replace(/&#13;/g, '')
+            pdfHtml = pdfHtml.replace(/undefined/g, '')
+            console.log('pdfHtml: ' + pdfHtml);
+            console.log('pdfHtml: ' + pdfHtml.length);
+            // Default export is a4 paper, portrait, using milimeters for units.
+            if (pdfHtml) {
+              console.log('Exporting pdf: ');
+              var doc = new jsPDF()
+              //$('#dummy').html(pdfHtml);
+              //pdfHtml = $('#dummy')[0].children[0];
+              pdfHtml = jQuery(pdfHtml).text();
+              console.log(pdfHtml);
+              //doc.fromHTML(pdfHtml);
+              doc.text(20, 20, doc.splitTextToSize(pdfHtml, 140));
+              doc.save('just_read_app_com.pdf');
+            }
+          }
         })
           .fail(function() {
             console.log( "error" );
@@ -61,14 +85,6 @@
           });
       }
 
-      console.log('pdfHtml: ' + pdfHtml);
-      // Default export is a4 paper, portrait, using milimeters for units
-      if (pdfHtml) {
-        console.log('Exporting pdf: ');
-        var doc = new jsPDF()
-        doc.text(pdfHtml, 10, 10)
-        doc.save('just_read_app_com.pdf')
-      }
     });
 
   </script>
