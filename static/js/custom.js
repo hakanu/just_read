@@ -50,6 +50,7 @@ function checkIfChromeExtensionInstalled() {
 function updateUiAfterLogout() {
   $('#btn-logout').addClass('hidden');
   $('#btn-login').removeClass('hidden');
+  $('#jumbotron').removeClass('hidden');
   $('#p-login-username').html('Not logged in');
   $('#ul-urls').html('');
   $('#p-message').text('Log in first');
@@ -84,6 +85,7 @@ function userSignIn() {
 
 function initUiWithUserBookmarks(user) {
   console.log('initing UI for ' + user.uid);
+  $('#jumbotron').addClass('hidden');
   $('#btn-logout').removeClass('hidden');
   $('#btn-login').addClass('hidden');
   $('#p-login-username').text('Logged in as ' + user.displayName);
