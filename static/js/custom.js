@@ -50,7 +50,6 @@ function checkIfChromeExtensionInstalled() {
 function updateUiAfterLogout() {
   $('#btn-logout').addClass('hidden');
   $('#btn-login').removeClass('hidden');
-  $('#jumbotron').removeClass('hidden');
   $('#p-login-username').html('Not logged in');
   $('#ul-urls').html('');
   $('#p-message').text('Log in first');
@@ -85,7 +84,6 @@ function userSignIn() {
 
 function initUiWithUserBookmarks(user) {
   console.log('initing UI for ' + user.uid);
-  $('#jumbotron').addClass('hidden');
   $('#btn-logout').removeClass('hidden');
   $('#btn-login').addClass('hidden');
   $('#p-login-username').text('Logged in as ' + user.displayName);
@@ -98,7 +96,7 @@ function initUiWithUserBookmarks(user) {
         '<sup><a href="{originalUrl}" target="_blank">Source</a></sup></p>' +
         '</p>' +
         '<p><sub>Tags: {tags}</sub></p><hr>');
-    firebase.database().ref('/user_uid_to_urls/' + user.uid).once('value').then(
+    firebase.database().ref('/user_uid_to_urls/' + user.uid).orderByChild("date_added").limitToLast(100).once('value').then(
       function(snapshot) {
         // console.log(JSON.stringify(snapshot.val()));
         var urls = snapshot.val();
@@ -115,7 +113,7 @@ function initUiWithUserBookmarks(user) {
           if (urlItem && urlItem.tags) {
             tags = urlItem.tags.join();
           }
-          $('#ul-urls').append(_URL_TEMPLATE.supplant({
+          $('#ul-urls').prepend(_URL_TEMPLATE.supplant({
               'url': '/?url=' + urlItem.url_key,
               'title': urlItem.title,
               'date_added': urlItem.date_added,
